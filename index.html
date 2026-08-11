@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>식스샵 기능 | 페이지·블록·홈페이지 만들기</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --accent:#6b5bff;
+    --accent-soft:#efeaff;
+    --ink:#17171c;
+    --muted:#71717f;
+    --line:#ececf1;
+    --bg:#ffffff;
+    --soft:#f6f6f9;
+    --radius:18px;
+    --maxw:1120px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+
+  /* ===== Top nav ===== */
+  header.top{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line);}
+  .top .wrap{display:flex;align-items:center;gap:28px;height:66px;}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:22px;letter-spacing:-.03em;}
+  .logo .dot{width:22px;height:22px;border-radius:7px 7px 7px 2px;background:linear-gradient(135deg,var(--accent),#ff7ab6);display:inline-block;}
+  nav.gnb{display:flex;gap:22px;margin-left:6px;font-size:15px;font-weight:600;color:#3a3a44;}
+  nav.gnb a.active{color:var(--accent);}
+  .top .right{margin-left:auto;display:flex;align-items:center;gap:14px;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:700;border-radius:999px;cursor:pointer;border:0;font-size:15px;transition:transform .05s ease,opacity .2s;}
+  .btn:active{transform:translateY(1px);}
+  .btn-dark{background:var(--ink);color:#fff;padding:11px 20px;}
+  .btn-ghost{background:transparent;color:#3a3a44;font-weight:600;padding:11px 8px;}
+  .btn-accent{background:var(--accent);color:#fff;padding:13px 24px;font-size:16px;}
+  .btn-line{background:#fff;border:1px solid var(--line);color:var(--ink);padding:12px 22px;}
+  .btn-lg{padding:15px 30px;font-size:16px;}
+
+  /* ===== Feature tabs ===== */
+  .tabsbar{position:sticky;top:66px;z-index:40;background:#fff;border-bottom:1px solid var(--line);}
+  .tabsbar .wrap{display:flex;flex-wrap:wrap;gap:8px;padding-top:12px;padding-bottom:12px;}
+  .tab{flex:0 0 auto;padding:9px 16px;border-radius:999px;background:var(--soft);color:#54545f;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;border:1px solid transparent;}
+  .tab:hover{color:var(--ink);}
+  .tab.active{background:var(--accent-soft);color:var(--accent);border-color:#dcd4ff;}
+  .tab .g{font-size:11px;opacity:.6;margin-right:6px;font-weight:700;}
+
+  /* ===== Page sections ===== */
+  main{padding-bottom:40px;}
+  .page{display:none;animation:fade .35s ease;}
+  .page.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  /* Hero - 중앙 정렬 */
+  section.hero{padding:78px 0 40px;text-align:center;}
+  .eyebrow{display:inline-block;font-size:13px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:6px 12px;border-radius:999px;margin-bottom:20px;}
+  h1{font-size:48px;line-height:1.18;letter-spacing:-.035em;margin:0 0 20px;font-weight:800;}
+  .hero p.sub{font-size:19px;color:var(--muted);margin:0 auto 30px;line-height:1.62;max-width:720px;}
+  .hero .actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:center;}
+  .hero-showcase{margin:44px auto 0;max-width:960px;}
+
+  /* Value sections - 이미지 ↔ 텍스트 좌우 배치(교차) */
+  .rows{padding:20px 0;}
+  .section-blk{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;padding:56px 0;}
+  .section-blk.img-right .media{order:2;}
+  .section-blk + .section-blk{border-top:1px solid var(--line);}
+  .section-blk .kicker{font-size:14px;font-weight:700;color:var(--accent);margin:0 0 10px;}
+  .section-blk h2{font-size:30px;line-height:1.3;letter-spacing:-.03em;margin:0 0 16px;font-weight:800;}
+  .section-blk p.lead{font-size:17px;color:#3f3f4a;margin:0 0 16px;line-height:1.62;}
+  .section-blk ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .section-blk li{position:relative;padding-left:26px;font-size:16px;color:#44444f;}
+  .section-blk li::before{content:"";position:absolute;left:0;top:9px;width:14px;height:14px;border-radius:5px;background:var(--accent-soft);border:2px solid var(--accent);}
+  .section-blk li b{color:var(--ink);}
+  .note{margin-top:16px;font-size:14px;color:#8a8a95;background:var(--soft);border-radius:12px;padding:12px 16px;}
+
+  /* image placeholder */
+  .ph{position:relative;width:100%;aspect-ratio:16/10;background:
+      repeating-linear-gradient(45deg,#f3f3f7 0 12px,#eeeef4 12px 24px);
+    border:1.5px dashed #c7c7d4;border-radius:var(--radius);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    text-align:center;padding:22px;color:#8b8b98;}
+  .ph .chip{font-size:11px;font-weight:800;letter-spacing:.02em;color:var(--accent);background:#fff;border:1px solid #dcd4ff;border-radius:999px;padding:4px 10px;}
+  .ph .desc{font-size:13.5px;line-height:1.55;max-width:88%;color:#7c7c88;}
+  .ph.tall{aspect-ratio:4/5;}
+  .ph.wide{aspect-ratio:16/7;}
+
+  /* steps */
+  .steps{background:var(--soft);border-radius:24px;padding:40px 34px;margin:36px 0;}
+  .steps h3{margin:0 0 24px;font-size:20px;font-weight:800;letter-spacing:-.02em;}
+  .steps .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;}
+  .step .num{width:34px;height:34px;border-radius:10px;background:var(--accent);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:15px;}
+  .step .st{font-weight:700;margin-bottom:4px;}
+  .step .sd{font-size:14.5px;color:var(--muted);}
+
+  /* usecase */
+  .usecase{padding:8px 0 4px;}
+  .usecase h3{font-size:20px;font-weight:800;margin:0 0 16px;letter-spacing:-.02em;}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;}
+  .chips span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:14.5px;color:#454550;font-weight:600;}
+
+  /* type table (ai page) */
+  .typetable{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:4px;}
+  .typetable .t{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;}
+  .typetable .t b{display:block;color:var(--accent);margin-bottom:6px;font-size:14px;}
+  .typetable .t span{font-size:14px;color:#565661;line-height:1.5;}
+
+  /* cta band */
+  .ctaband{margin:48px 0 10px;background:linear-gradient(120deg,#1c1b2e,#3a2f6b 60%,#5b4bd6);border-radius:26px;padding:52px 40px;text-align:center;color:#fff;}
+  .ctaband h3{font-size:30px;font-weight:800;letter-spacing:-.03em;margin:0 0 12px;}
+  .ctaband p{color:#cfc9f0;margin:0 0 26px;font-size:16px;}
+  .ctaband .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .ctaband .btn-line{background:transparent;border-color:rgba(255,255,255,.4);color:#fff;}
+
+  footer{border-top:1px solid var(--line);padding:34px 0;color:#9a9aa6;font-size:14px;}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+
+  @media (max-width:880px){
+    nav.gnb,.top .right .btn-ghost,.mega{display:none;}
+    h1{font-size:32px;}
+    section.hero{padding:44px 0 16px;}
+    .hero-showcase{margin-top:30px;}
+    .section-blk{grid-template-columns:1fr;gap:24px;padding:34px 0;}
+    .section-blk.img-right .media{order:0;}
+    .section-blk h2{font-size:24px;}
+    .ctaband{padding:40px 22px;}
+    .ctaband h3{font-size:24px;}
+  }
+
+  /* ===== Mega menu (hover, Shopify 스타일) ===== */
+  .gnb .has-caret::after{content:"⌄";font-size:12px;margin-left:5px;position:relative;top:-2px;opacity:.7;}
+  .mega{position:fixed;top:66px;left:0;width:100%;background:#fff;border-top:1px solid var(--line);box-shadow:0 30px 60px -22px rgba(30,25,80,.28);opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .18s ease,transform .18s ease,visibility .18s;z-index:48;}
+  .mega.open{opacity:1;visibility:visible;transform:none;}
+  .mega-grid{display:grid;grid-template-columns:1.15fr 1fr 1fr 1.1fr;gap:32px;padding:32px 24px 38px;align-items:start;}
+  .mega-h{font-size:12px;font-weight:800;letter-spacing:.03em;color:#a0a0ad;margin:0 0 10px;}
+  .mega-col .mega-group + .mega-group{margin-top:22px;}
+  .mega-item{display:block;padding:9px 12px;border-radius:12px;cursor:pointer;transition:background .12s;}
+  .mega-item:hover{background:var(--soft);}
+  .mega-item b{display:block;font-size:14.5px;font-weight:700;color:var(--ink);line-height:1.3;}
+  .mega-item small{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;}
+  .mega-promo{background:linear-gradient(150deg,#efeaff,#f6f3ff);border:1px solid #e6dfff;border-radius:16px;padding:22px;display:flex;flex-direction:column;min-height:100%;}
+  .mega-promo .pt{font-size:16px;font-weight:800;margin:6px 0;color:var(--ink);}
+  .mega-promo .pd{font-size:13px;color:#5a5a66;line-height:1.55;}
+  .mega-promo .pbtn{margin-top:auto;padding-top:16px;}
+  .mega-promo .pbtn button{width:100%;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="logo"><span class="dot"></span>sixshop</div>
+    <nav class="gnb">
+      <a href="#">템플릿</a>
+      <a href="#" class="active has-caret" id="feat-trigger">기능</a>
+      <a href="#">제작의뢰</a>
+      <a href="#">고객사례</a>
+      <a href="#">가이드</a>
+      <a href="#">요금제</a>
+    </nav>
+    <div class="right">
+      <button class="btn btn-ghost">로그인</button>
+      <button class="btn btn-dark">무료로 시작하기</button>
+    </div>
+  </div>
+</header>
+
+<div class="mega" id="mega"><div class="wrap mega-grid" id="megaGrid"></div></div>
+
+<div class="tabsbar">
+  <div class="wrap" id="tabs"></div>
+</div>
+
+<main id="pages"></main>
+
+<footer>
+  <div class="wrap">
+    <span>ⓘ 기획용 시안 — 이미지 자리는 영역만 잡아둔 플레이스홀더예요.</span>
+    <span>sixshop</span>
+  </div>
+</footer>
+
+<script>
+/* ---------- 콘텐츠 데이터 (기획서 기반, 안내서 말투) ---------- */
+const PAGES = [
+  {
+    id:"ai-page", group:"AI 제작 기능", tab:"AI로 페이지 만들기",
+    eyebrow:"AI 페이지 생성",
+    h1:"어떤 페이지를 만들어 볼까요?",
+    sub:"만들고 싶은 페이지를 한 문장으로 적으면, AI가 완성된 페이지를 만들어 줘요. 다 만든 뒤에는 에디터에서 바로 고칠 수 있어요.",
+    heroImg:"‘어떤 페이지를 만들어 볼까요?’ 입력창 + 스타일 참조 옵션 화면",
+    sections:[
+      {kicker:"한 문장으로 시작", h2:"한 문장만 적으면 페이지가 완성돼요",
+       lead:"만들고 싶은 페이지를 한 문장으로 적기만 하면 돼요. 자세히 적을수록 AI가 더 정확하게 만들어 줘요.",
+       points:["코딩도 디자인도 몰라도, 보기 좋은 페이지가 나와요.","예: ‘브랜드 소개랑 인기 상품, 후기까지 담은 메인 페이지 만들어줘’"],
+       img:"페이지를 적는 입력창 + 추천 문구 화면"},
+      {kicker:"스타일 맞추기", h2:"AI가 내 브랜드 색깔을 그대로 입혀 줘요",
+       lead:"참고할 디자인을 정해 두면, AI가 그 느낌 그대로 만들어 줘요.",
+       points:["<b>내 사이트</b> — 내 사이트 페이지의 디자인을 그대로 따라가요.","<b>디자인 지침</b> — 색·글꼴·여백을 정하거나 Airbnb·Apple 같은 유명 브랜드 스타일을 골라요.","<b>URL</b> — 참고할 사이트 주소를 넣으면 그 느낌으로 맞춰요."],
+       note:"‘디자인 지침’은 지금은 이미지 첨부와 같이 쓸 수 없어요(곧 지원해요).",
+       img:"‘내 사이트 / 디자인 지침 / URL’ 선택 + 브랜드 스타일 목록"},
+      {kicker:"바로 수정", h2:"만든 페이지를 그 자리에서 바로 고쳐요",
+       lead:"AI가 만든 페이지에는 수정 창(설정 패널)이 함께 생겨요.",
+       points:["글자·이미지·색을 눌러서 그 자리에서 바꿔요.","더 세밀하게 만들고 싶으면 블록 AI로 이어져요."],
+       img:"만들어진 페이지 + 옆에 뜨는 수정 창(설정 패널)"},
+    ],
+    ctaTitle:"지금 한 문장으로 페이지를 만들어 보세요", ctaSub:"14일 동안 무료로 써볼 수 있어요."
+  },
+
+  {
+    id:"url", group:"AI 제작 기능", tab:"URL로 페이지 만들기",
+    eyebrow:"URL로 페이지 만들기",
+    h1:"링크만 붙여넣으면 페이지가 완성돼요",
+    sub:"참고하고 싶은 사이트 주소를 붙여넣으면, 식스샵이 그 페이지를 바탕으로 빠르게 만들어 줘요. 처음부터 만들 필요가 없어요.",
+    heroImg:"다른 사이트 → 식스샵 페이지로 바뀌는 모습",
+    sections:[
+      {kicker:"주소 붙여넣기", h2:"링크 하나만 붙여넣으면 바로 시작할 수 있어요",
+       lead:"‘페이지 추가 › 자동 변환 › URL’에 주소를 넣고 [변환]만 누르면 돼요.",
+       points:["참고할 사이트 주소만 있으면 바로 시작할 수 있어요."],
+       img:"‘변환할 URL을 입력해 주세요’ 입력창 + [변환] 버튼"},
+      {kicker:"자동 변환", h2:"그 사이트를 닮은 페이지가 뚝딱 만들어져요",
+       lead:"넣은 주소를 바탕으로 페이지가 자동으로 만들어져요.",
+       points:["뼈대를 잡아 주니까, 내용만 채우면 끝나요."],
+       img:"주소 입력 → 만들어진 페이지를 나란히 비교"},
+      {kicker:"내 것으로", h2:"이제 그 페이지를 내 브랜드에 맞게 바꿔요",
+       lead:"만들어진 페이지는 에디터에서 내 글·이미지로 바꿀 수 있어요.",
+       points:["남의 콘텐츠를 그대로 쓰기보다, 참고만 하고 내 걸로 바꿔서 쓰세요."],
+       img:"만들어진 페이지의 글·이미지·색을 바꾸는 화면"},
+    ],
+    ctaTitle:"링크 하나로 시작해 보세요", ctaSub:"붙여넣기만 하면, 바꿔 쓸 수 있는 페이지가 돼요."
+  },
+
+  {
+    id:"image", group:"AI 제작 기능", tab:"이미지로 페이지 만들기",
+    eyebrow:"이미지로 페이지 만들기",
+    h1:"이미지 한 장이 웹페이지가 돼요",
+    sub:"디자인 시안이나 화면 캡처를 올리면, 식스샵이 그 모습 그대로 웹페이지로 만들어 줘요.",
+    heroImg:"이미지 파일 → 식스샵 페이지로 바뀌는 모습",
+    sections:[
+      {kicker:"이미지 올리기", h2:"캡처든 시안이든 올리기만 하면 돼요",
+       lead:"‘페이지 추가 › 자동 변환 › 이미지’에서 이미지를 올려요.",
+       points:["<b>PNG · JPG · JPEG · WEBP</b>를 올릴 수 있어요.","화면 캡처, 디자인 시안 뭐든 괜찮아요."],
+       img:"‘변환할 이미지를 첨부해 주세요’ + [이미지 업로드] (PNG·JPG·JPEG·WEBP)"},
+      {kicker:"자동 변환", h2:"올린 이미지가 그대로 진짜 페이지가 돼요",
+       lead:"올린 이미지를 바탕으로 페이지가 자동으로 만들어져요.",
+       points:["디자인만 있고 코드가 없어도, 실제 페이지가 나와요."],
+       img:"이미지 ↔ 만들어진 페이지를 나란히 비교"},
+      {kicker:"마무리", h2:"글도 이미지도 자유롭게 손볼 수 있어요",
+       lead:"만들어진 페이지는 글·이미지·배치를 마음대로 바꿀 수 있어요.",
+       points:[],
+       img:"만들어진 페이지를 에디터에서 고치는 화면"},
+    ],
+    ctaTitle:"이미지 한 장으로 시작해 보세요", ctaSub:"화면 캡처, 시안만 있으면 충분해요."
+  },
+
+  {
+    id:"figma", group:"AI 제작 기능", tab:"피그마 디자인 변환하기",
+    eyebrow:"피그마로 페이지 만들기",
+    h1:"피그마에서 그린 디자인이 그대로 웹페이지가 돼요",
+    sub:"피그마 계정을 연결하고 프레임 주소만 붙여넣으면, 식스샵이 바로 고칠 수 있는 페이지로 만들어 줘요.",
+    heroImg:"피그마 화면 → 식스샵 페이지로 바뀌는 모습",
+    sections:[
+      {kicker:"계정 연결", h2:"계정은 한 번만 연결하면 돼요",
+       lead:"오른쪽 위 [계정 연동하기]에 피그마 토큰을 넣으면 연결돼요.",
+       points:["토큰은 피그마 <b>Settings › Security</b>에서 만들어요.","<b>읽기 권한 2개</b>만 켜면 되고, 기간은 1~90일로 정해요.","토큰은 만든 직후에만 복사돼요. 꼭 메모해 두세요."],
+       img:"‘피그마 계정 연동’ 창 — 토큰 입력 + [가이드 보기]"},
+      {kicker:"주소 넣기", h2:"프레임 주소를 붙여넣고 변환을 눌러요",
+       lead:"피그마에서 프레임을 우클릭해 ‘Copy link to section’으로 주소를 복사해요.",
+       points:["주소를 넣고 [변환]을 누르면, 바로 고칠 수 있는 페이지가 나와요."],
+       img:"‘피그마 Frame URL을 입력해 주세요’ + [변환] + 결과 미리보기"},
+      {kicker:"마무리", h2:"옮겨 온 페이지를 바로 손볼 수 있어요",
+       lead:"만들어진 페이지는 글·이미지·배치를 바로 바꿀 수 있어요.",
+       points:["<b>AI 블록 수정</b>으로 수정 창을 더 붙일 수도 있어요."],
+       note:"피그마 변환 횟수는 피그마 요금제에 따라 달라요(무료는 월 6회 등).",
+       img:"만들어진 페이지 편집 + AI 블록 수정으로 수정 창을 붙이는 화면"},
+    ],
+    ctaTitle:"피그마 디자인을 그대로 옮겨 보세요", ctaSub:"연결하고 주소만 넣으면 끝이에요."
+  },
+
+  {
+    id:"html", group:"AI 제작 기능", tab:"HTML 디자인 변환하기",
+    eyebrow:"HTML로 페이지 만들기",
+    h1:"코드만 붙여넣으면 페이지가 돼요",
+    sub:"AI로 만든 HTML을 붙여넣거나 파일로 올리면, 식스샵이 바로 고칠 수 있는 페이지로 만들어 줘요.",
+    heroImg:"HTML 코드 → 식스샵 페이지로 바뀌는 모습",
+    sections:[
+      {kicker:"코드 준비", h2:"어떤 AI로 만든 코드든 다 괜찮아요",
+       lead:"구글 스티치·Claude·ChatGPT·Gemini로 만든 HTML을 그대로 쓸 수 있어요.",
+       points:["다른 AI로 만든 결과물을 식스샵으로 가져오는 통로예요."],
+       img:"구글 스티치·Claude·ChatGPT·Gemini + HTML이 식스샵으로 모이는 그림"},
+      {kicker:"넣는 방법", h2:"코드를 붙여넣거나 파일로 올리면 돼요",
+       lead:"코드를 직접 붙여넣어도 되고, [HTML 파일 불러오기]로 올려도 돼요.",
+       points:["코드가 길면 [크게보기]로 크게 열어 편하게 작업해요.","다 됐으면 [변환]만 누르면 돼요."],
+       img:"HTML 입력창 + [HTML 파일 불러오기]·[크게보기]·[변환] 버튼"},
+      {kicker:"마무리", h2:"들어온 페이지를 자유롭게 다듬어요",
+       lead:"만들어진 페이지는 글·이미지·배치를 바꿀 수 있어요.",
+       points:["[활용팁]에서 더 잘 만드는 방법을 볼 수 있어요."],
+       img:"만들어진 페이지를 에디터에서 고치는 화면"},
+    ],
+    ctaTitle:"HTML을 바로 페이지로 옮겨 보세요", ctaSub:"붙여넣거나 파일로 올리면 돼요."
+  },
+
+  {
+    id:"block-ai", group:"AI 제작 기능", tab:"AI로 블록 제작",
+    eyebrow:"블록 AI",
+    h1:"필요한 블록을 말로 만들어요",
+    sub:"원하는 요소를 말로 설명하면 AI가 블록을 만들어 줘요. 신청 폼·달력·움직이는 효과처럼 어려운 것도 만들 수 있어요.",
+    heroImg:"말로 적으면 블록이 만들어지는 모습",
+    sections:[
+      {kicker:"블록 만들기", h2:"말 한마디면 블록이 뚝딱 만들어져요",
+       lead:"‘에디터 › 섹션 추가 › AI 블록 생성’에서 원하는 걸 적으면 바로 만들어져요.",
+       points:["<b>이미지도 함께</b> 넣으면 더 정확하게 만들어져요.","내용을 바꿀 수 있는 수정 창도 같이 생겨요."],
+       img:"‘에디터 › 섹션 추가 › AI 블록 생성’ 입력 화면"},
+      {kicker:"골라서 수정", h2:"고칠 곳만 콕 집어서 다시 말하면 돼요",
+       lead:"[AI로 블록 수정]을 눌러 바꾸고 싶은 걸 말하면 돼요.",
+       points:["<b>바꿀 부분만 골라</b> 글자·색·배치를 바꿔요.","고친 블록은 아래에 새로 생겨서, 원본은 그대로 남아요."],
+       img:"블록 안 버튼을 골라 ‘색 바꿔줘’라고 말하는 화면"},
+      {kicker:"코드 수정", h2:"코드로 더 깊게 다듬을 수도 있어요",
+       lead:"[블록 코드 수정]을 누르면 블록 메이커에서 HTML/CSS/JS로 다뤄요.",
+       points:["신청 폼·달력·움직이는 효과처럼 어려운 것도 자유롭게 만들어요."],
+       img:"[블록 코드 수정] → 블록 메이커의 코드 편집 + 미리보기"},
+      {kicker:"다시 쓰기", h2:"한 번 만든 블록은 어디서든 다시 써요",
+       lead:"만든 블록은 저장해서 여러 페이지에 다시 쓸 수 있어요.",
+       points:["마켓플레이스 블록을 가져와 고쳐 쓸 수도 있어요."],
+       img:"저장한 블록을 다른 페이지에 넣는 화면"},
+    ],
+    ctaTitle:"원하는 블록을 말로 만들어 보세요", ctaSub:"만들고, 고칠 곳만 골라 바꾸면 돼요."
+  },
+
+  {
+    id:"appstore", group:"마켓플레이스", tab:"앱스토어",
+    eyebrow:"앱스토어",
+    h1:"필요한 기능을 앱으로 더해요",
+    sub:"(작성 예정) 앱스토어 소개 문구가 들어갈 자리예요.",
+    heroImg:"앱스토어 메인 화면",
+    sections:[
+      {kicker:"준비 중", h2:"곧 내용이 채워질 예정이에요", lead:"이 페이지는 준비 중이에요.", points:[], img:"앱스토어 소개 이미지"},
+    ],
+    ctaTitle:"앱스토어 둘러보기", ctaSub:"(작성 예정)"
+  },
+
+  {
+    id:"block-market", group:"마켓플레이스", tab:"블록 마켓플레이스",
+    eyebrow:"블록 마켓플레이스",
+    h1:"전문가가 만든 블록을 가져와 써요",
+    sub:"(작성 예정) 블록 마켓플레이스 소개 문구가 들어갈 자리예요.",
+    heroImg:"블록 마켓플레이스 화면",
+    sections:[
+      {kicker:"준비 중", h2:"곧 내용이 채워질 예정이에요", lead:"이 페이지는 준비 중이에요.", points:[], img:"블록 마켓플레이스 소개 이미지"},
+    ],
+    ctaTitle:"블록 마켓플레이스 둘러보기", ctaSub:"(작성 예정)"
+  },
+
+  {
+    id:"template", group:"마켓플레이스", tab:"디자인 템플릿",
+    eyebrow:"디자인 템플릿",
+    h1:"원하는 템플릿을 고르고, 내용만 바꾸면 끝나요",
+    sub:"완성된 템플릿을 고르고 글·이미지만 내 것으로 바꾸면, 홈페이지가 바로 완성돼요. 무료 템플릿도 많아서 부담 없이 시작할 수 있어요.",
+    heroImg:"여러 업종의 감각적인 템플릿이 모여 있는 화면",
+    sections:[
+      {kicker:"바로 시작", h2:"무료 템플릿이 50개 넘게 준비돼 있어요",
+       lead:"감각적인 무료 템플릿이 많아서, 비용 없이 바로 시작할 수 있어요.",
+       points:["패션·홈/인테리어·식품·뷰티 등 <b>업종별로</b> 골라요.","심플·내추럴·톡톡 튀는 등 원하는 <b>분위기</b>로 찾아요."],
+       img:"업종·분위기 필터가 있는 무료 템플릿 목록"},
+      {kicker:"내 내용만", h2:"내 회사 내용만 바꾸면 홈페이지가 바로 완성돼요",
+       lead:"템플릿을 설치하고 글·이미지만 내 것으로 바꾸면 끝이에요. 처음부터 디자인할 필요가 없어요.",
+       points:["전문가가 만든 완성형이라, 완성도는 높게 시작해요.","빈칸을 채우듯 내용만 바꾸면 바로 오픈할 수 있어요."],
+       img:"템플릿의 문구·이미지를 내 회사 내용으로 바꾸는 화면"},
+      {kicker:"평생 이용", h2:"유료 템플릿은 한 번 사면 평생 쓸 수 있어요",
+       lead:"더 특별한 디자인이 필요하면 유료 템플릿을 골라요. 구독이 아니라 한 번 구매로 계속 쓸 수 있어요.",
+       points:["매달 내는 요금 없이, 한 번 결제로 평생 이용해요."],
+       img:"유료 템플릿 상세 + ‘한 번 구매, 평생 이용’ 안내"},
+      {kicker:"자유롭게", h2:"마음에 안 들면 언제든 무료로 바꿀 수 있어요",
+       lead:"쓰다가 분위기를 바꾸고 싶으면 다른 템플릿으로 자유롭게 갈아탈 수 있어요.",
+       points:["여러 디자인을 저장해 두고 골라 써요.","색·글꼴도 원하는 대로 손쉽게 바꿔요."],
+       img:"템플릿을 다른 템플릿으로 바꾸는 전후 비교"},
+    ],
+    ctaTitle:"마음에 드는 템플릿으로 바로 시작해 보세요", ctaSub:"무료 템플릿으로 지금 시작할 수 있어요."
+  },
+
+  {
+    id:"ops-agent", group:"운영", tab:"운영 에이전트",
+    eyebrow:"운영 에이전트",
+    h1:"쇼핑몰 운영을 도와주는 똑똑한 AI 비서예요",
+    sub:"운영 에이전트는 주문·배송·재고·매출 데이터를 실시간으로 분석해서, 지금 꼭 필요한 일과 데이터를 알아서 정리하고 제안해 줘요. 스토어를 만들면 누구나 바로 쓸 수 있어요.",
+    heroImg:"스토어 우측 하단 AI 버튼 + 운영 에이전트 대화 화면",
+    sections:[
+      {kicker:"대화로 조회", h2:"대화하듯 물어보면 바로 찾아 줘요",
+       lead:"복잡하게 검색하지 않고, 말하듯 물어보면 필요한 내용을 정리해서 보여줘요.",
+       points:["‘오늘 새로 들어온 주문 보여줘’","‘아직 발송 안 한 주문만 보여줘’","‘재고가 빠르게 줄어드는 상품과 품절 위험 상품 알려줘’"],
+       img:"운영 에이전트에게 주문·재고를 물어보는 대화 화면"},
+      {kicker:"실시간 분석", h2:"주문·배송·재고·매출을 실시간으로 분석해 줘요",
+       lead:"내 쇼핑몰 데이터를 실시간으로 분석해서, 지금 필요한 작업과 데이터를 알아서 정리하고 제안해 줘요.",
+       points:["오늘 처리할 주문·재고·매출 현황을 한눈에 정리해요.","일일이 들여다보지 않아도, 필요한 걸 먼저 알려줘요."],
+       img:"오늘 할 일·주문·재고·매출을 요약해 제안하는 화면"},
+      {kicker:"바로 시작", h2:"스토어를 만들면 누구나 바로 쓸 수 있어요",
+       lead:"따로 설치할 것 없이, 스토어 화면 우측 하단의 AI 버튼만 누르면 바로 시작해요.",
+       points:["복잡한 설정 없이 클릭 한 번으로 열려요.","누구나 무료로 사용할 수 있어요."],
+       img:"스토어 우측 하단 AI 버튼을 눌러 운영 에이전트를 여는 화면"},
+    ],
+    ctaTitle:"운영 에이전트로 하루를 가볍게 시작해 보세요", ctaSub:"스토어 우측 하단 AI 버튼으로 바로 쓸 수 있어요."
+  },
+
+  {
+    id:"bdk", group:"고급기능", tab:"블록 개발 킷",
+    eyebrow:"블록 개발 킷",
+    h1:"로컬에서 블록을 편하게 개발해요",
+    sub:"블록 개발 킷은 내 컴퓨터(로컬)에서 블록을 쉽게 개발하도록 도와주는 도구예요. 익숙한 AI와 함께 만들고, 실시간 프리뷰와 실제 스토어 미리보기로 결과를 바로 확인할 수 있어요.",
+    heroImg:"로컬 코드 편집 + 실시간 프리뷰 + 실제 스토어 미리보기 화면",
+    sections:[
+      {kicker:"로컬 개발", h2:"익숙한 AI와 함께, 로컬에서 블록을 만들어요",
+       lead:"Claude Code·Cursor처럼 내가 쓰던 AI 환경에서 블록과 페이지를 개발해요.",
+       points:["스타터 프로젝트를 열고 AI에게 시키면 바로 시작돼요.","Node.js만 준비하면 돼요(v24 이상)."],
+       img:"Claude Code / Cursor에서 블록 개발 킷 프로젝트를 연 화면"},
+      {kicker:"실시간 프리뷰", h2:"만드는 동안 결과를 바로바로 미리 봐요",
+       lead:"블록을 만들거나 고칠 때마다 프리뷰로 결과를 그 자리에서 확인할 수 있어요.",
+       points:["화면을 보며 다듬을 수 있어서 시행착오가 줄어요.","프리뷰에서 고친 내용은 파일로도 저장돼요."],
+       img:"로컬 개발 화면 옆에 실시간 프리뷰가 뜨는 모습"},
+      {kicker:"스토어 연동", h2:"실제 내 스토어에 적용된 모습을 미리 확인해요",
+       lead:"식스샵 MCP로 연동하면, 내 스토어에 실제로 적용된 미리보기를 그대로 볼 수 있어요.",
+       points:["앱스토어에서 ‘식스샵 MCP’를 설치하고, AI에게 연동을 요청하면 돼요.","확인이 끝나면 실제 스토어에 바로 적용해요."],
+       img:"내가 만든 블록이 실제 스토어에 적용된 미리보기 화면"},
+    ],
+    ctaTitle:"블록 개발 킷으로 블록을 개발해 보세요", ctaSub:"로컬에서 만들고, 실제 스토어에 바로 적용해요."
+  },
+
+  {
+    id:"mcp", group:"고급기능", tab:"MCP",
+    eyebrow:"MCP · 무료",
+    h1:"내가 쓰던 AI로 홈페이지까지 만들어요",
+    sub:"Claude·ChatGPT·Cursor처럼 내가 쓰던 AI에서 바로 식스샵을 다룰 수 있어요. 기획부터 디자인, 완성까지 말 몇 마디로 이어져요.",
+    heroImg:"AI 채팅으로 시키면 사이트가 만들어지는 모습",
+    sections:[
+      {kicker:"AI 연결", h2:"내가 쓰는 AI에 식스샵이 바로 연결돼요",
+       lead:"Claude·Cursor·ChatGPT·Gemini CLI·마누스·그록 등에서 쓸 수 있어요.",
+       points:["식스샵이 AI를 주는 게 아니라, <b>여러 AI와 연결되는 열린 구조</b>예요.","가장 익숙한 AI로 원하는 대로 만들면 돼요."],
+       img:"여러 AI 로고가 식스샵과 연결되는 그림"},
+      {kicker:"자동으로", h2:"말로 시키면 AI가 알아서 만들어 줘요",
+       lead:"말로 시키기만 하면 블록을 만들고 디자인까지 입혀요.",
+       points:["기획부터 디자인·완성까지 한 번에 이어져요."],
+       img:"‘이런 블록 만들어줘’ → 식스샵에 반영되는 화면"},
+      {kicker:"바로 게시", h2:"디자인 도구와 연결해 결과물을 바로 올려요",
+       lead:"Figma·Google Sheets와 연결해 결과를 바로 사이트로 올려요.",
+       points:["며칠씩 걸리던 일을 확 줄여줘요."],
+       img:"Figma·Google Sheets 결과가 사이트로 올라가는 흐름"},
+      {kicker:"무료", h2:"게다가 MCP는 무료로 열려 있어요",
+       lead:"MCP는 무료 플랜까지 열려 있어서, 추가 비용 없이 쓸 수 있어요.",
+       points:["앱만 설치하면 바로 시작할 수 있어요."],
+       img:"‘MCP 무료’ 강조 배너"},
+    ],
+    ctaTitle:"내가 쓰던 AI로 홈페이지를 만들어 보세요", ctaSub:"MCP는 무료로 열려 있어요."
+  },
+
+  {
+    id:"custom-app", group:"고급기능", tab:"커스텀 앱",
+    eyebrow:"커스텀 앱",
+    h1:"우리 스토어에 딱 맞는 앱을 직접 만들어요",
+    sub:"주문·고객·배송 같은 API를 활용해, 필요한 기능을 커스텀 앱으로 직접 만들 수 있어요. 우리 스토어에서만 쓰는 비공개 앱으로도, 앱스토어에 올리는 공개 앱으로도 만들 수 있어요.",
+    heroImg:"앱스토어에 등록된 여러 앱 목록 + ‘내가 만든 앱’ 화면",
+    sections:[
+      {kicker:"시작하기", h2:"앱 개발자 센터에서 개발 권한을 요청해요",
+       lead:"파트너 센터의 [앱 개발자 센터]에서 앱 개발 권한을 요청하고, 승인되면 개발을 시작해요.",
+       points:["파트너 센터에 가입하고, 테스트 스토어를 하나 만들어요.","앱을 등록하고 스토어 키를 연결하면 준비가 끝나요."],
+       img:"파트너 센터 › 앱 개발자 센터에서 앱을 등록하는 화면"},
+      {kicker:"기능 만들기", h2:"주문·고객·배송 API로 원하는 기능을 만들어요",
+       lead:"필요한 데이터를 API로 불러와, 우리 스토어에 딱 맞는 기능을 만들어요.",
+       points:["앱 설치 후 발급되는 코어 액세스 키로 API를 호출해요.","반복되는 운영 업무를 앱으로 자동화할 수 있어요."],
+       img:"커스텀 앱이 주문·고객·배송 데이터를 다루는 화면"},
+      {kicker:"공개 범위", h2:"공개 앱으로, 또는 우리만 쓰는 비공개 앱으로 만들어요",
+       lead:"만든 앱은 앱스토어에 올려 누구나 쓰게 하거나, 우리 스토어에서만 쓰는 비공개 앱으로 둘 수 있어요.",
+       points:["우리 스토어에서만 쓰고 싶으면 비공개 앱으로 만들어요.","다른 사장님들과 나누고 싶으면 공개 앱으로 등록해요."],
+       img:"공개/비공개 설정 + 앱스토어 등록 화면"},
+    ],
+    ctaTitle:"우리 스토어에 딱 맞는 앱을 만들어 보세요", ctaSub:"앱 개발자 센터에서 권한을 요청하면 시작할 수 있어요."
+  },
+
+  {
+    id:"api", group:"고급기능", tab:"API",
+    eyebrow:"API",
+    h1:"API로 스토어 운영을 자동화해요",
+    sub:"주문·상품·고객·배송 등 다양한 API를 활용해, 반복되는 운영 업무를 자동화할 수 있어요. 외부 서비스와 연동하는 것도 가능해요.",
+    heroImg:"여러 API가 외부 서비스와 연결되는 그림",
+    sections:[
+      {kicker:"자동화", h2:"반복되는 운영 업무를 API로 자동화해요",
+       lead:"주문 수집·재고 갱신·배송 처리 같은 반복 작업을 API로 자동으로 처리해요.",
+       points:["ERP·물류·마케팅 툴 같은 외부 서비스와 연동할 수 있어요.","사람이 하나하나 처리하지 않아도 돼요."],
+       img:"주문 → 배송 → 통계가 자동으로 이어지는 흐름도"},
+      {kicker:"제공 API", h2:"이런 API를 활용할 수 있어요",
+       lead:"주문부터 상품·고객·배송까지, 운영에 필요한 API를 폭넓게 제공해요. 전체 목록과 명세는 API 문서에서 확인할 수 있어요.",
+       points:["<b>주문·장바구니</b> — order, cart","<b>상품·카탈로그</b> — product, catalog, category, stock, productNotice","<b>고객</b> — customer, grade, group","<b>배송</b> — shippingCarrier, shippingMethod, shippingPolicy","<b>기타</b> — standardCategory, taxCategory, template 등"],
+       img:"API 문서 사이드바의 리소스 목록(order·product·customer·shipping…)"},
+      {kicker:"문서", h2:"자세한 사용법은 API 문서에서 확인해요",
+       lead:"각 API의 요청·응답과 예시는 공식 API 문서에 정리돼 있어요.",
+       points:["앱 설치 후 발급되는 코어 액세스 키로 호출해요.","외부 3rd Party 연동 가이드도 함께 제공돼요."],
+       img:"API 문서(엔드포인트·요청/응답 예시) 화면"},
+    ],
+    ctaTitle:"API로 운영을 자동화해 보세요", ctaSub:"자세한 명세는 API 문서에서 확인할 수 있어요."
+  },
+
+  {
+    id:"custom-db", group:"고급기능", tab:"커스텀 DB",
+    eyebrow:"커스텀 DB",
+    h1:"나만의 데이터를 자유롭게 다뤄요",
+    sub:"(작성 예정) 커스텀 DB 소개 문구가 들어갈 자리예요.",
+    heroImg:"커스텀 DB 화면",
+    sections:[
+      {kicker:"준비 중", h2:"곧 내용이 채워질 예정이에요", lead:"이 페이지는 준비 중이에요.", points:[], img:"커스텀 DB 소개 이미지"},
+    ],
+    ctaTitle:"커스텀 DB 둘러보기", ctaSub:"(작성 예정)"
+  },
+];
+
+/* ---------- 렌더 ---------- */
+const groupLabel = {"AI 제작 기능":"AI 제작 기능","마켓플레이스":"마켓플레이스","운영":"운영","고급기능":"고급기능"};
+
+function ph(desc, cls=""){
+  return `<div class="ph ${cls}"><span class="chip">🖼️ 이미지</span><span class="desc">${desc}</span></div>`;
+}
+
+function renderRows(sections){
+  // 좌우 배치, 이미지 위치를 번갈아: 짝수=이미지 왼쪽, 홀수=이미지 오른쪽
+  return `<div class="rows">` + sections.map((s,i)=>{
+    const media = `<div class="media">${ph(s.img)}</div>`;
+    const text = `<div class="text">
+        <p class="kicker">${s.kicker}</p>
+        <h2>${s.h2}</h2>
+        ${s.lead?`<p class="lead">${s.lead}</p>`:""}
+        ${s.points&&s.points.length?`<ul>${s.points.map(p=>`<li>${p}</li>`).join("")}</ul>`:""}
+        ${s.note?`<div class="note">⚠️ ${s.note}</div>`:""}
+      </div>`;
+    const imgRight = i%2===1;
+    return `<div class="section-blk${imgRight?" img-right":""}">${media}${text}</div>`;
+  }).join("") + `</div>`;
+}
+
+function renderPage(p){
+  return `<section class="page" id="page-${p.id}" role="tabpanel">
+    <div class="wrap">
+      <section class="hero">
+        <span class="eyebrow">${p.eyebrow}</span>
+        <h1>${p.h1}</h1>
+        <p class="sub">${p.sub}</p>
+      </section>
+
+      ${renderRows(p.sections)}
+
+      <div class="ctaband">
+        <h3>${p.ctaTitle}</h3>
+        <p>${p.ctaSub}</p>
+        <div class="actions">
+          <button class="btn btn-accent btn-lg">무료로 시작하기</button>
+          <button class="btn btn-line btn-lg">가이드 보기</button>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+const tabsEl = document.getElementById("tabs");
+const pagesEl = document.getElementById("pages");
+let lastGroup = "";
+tabsEl.innerHTML = PAGES.map((p,i)=>{
+  const g = p.group!==lastGroup ? `<span class="g">${groupLabel[p.group]}</span>`:"";
+  lastGroup = p.group;
+  return `<button class="tab${i===0?' active':''}" data-id="${p.id}">${g}${p.tab}</button>`;
+}).join("");
+pagesEl.innerHTML = PAGES.map((p,i)=>renderPage(p)).join("");
+document.querySelector("#page-"+PAGES[0].id).classList.add("active");
+
+function switchTo(id){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.id===id));
+  document.querySelectorAll(".page").forEach(pg=>pg.classList.remove("active"));
+  const pg = document.getElementById("page-"+id);
+  if(pg) pg.classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+tabsEl.addEventListener("click",e=>{
+  const btn = e.target.closest(".tab");
+  if(!btn) return;
+  switchTo(btn.dataset.id);
+});
+
+/* ---------- Mega menu (hover, Shopify 스타일) ---------- */
+const MENU_DESC = {
+  "ai-page":"프롬프트 한 줄로 제작해요",
+  "url":"주소만 입력하고 시작해요",
+  "image":"이미지 한 장으로 만들어요",
+  "figma":"피그마 디자인을 변환해요",
+  "html":"HTML 코드를 변환해요",
+  "block-ai":"프롬프트로 블록을 만들어요",
+  "bdk":"로컬에서 블록을 개발해요",
+  "mcp":"GPT·Claude와 연동해요",
+  "template":"템플릿으로 바로 시작해요",
+  "ops-agent":"AI가 운영을 도와줘요",
+  "custom-app":"API로 앱을 만들어요",
+  "api":"API로 업무를 자동화해요",
+  "appstore":"필요한 기능을 앱으로 더해요",
+  "block-market":"전문가가 만든 200여 개 디자인",
+  "custom-db":"나만의 데이터를 다뤄요",
+};
+const byId = Object.fromEntries(PAGES.map(p=>[p.id,p]));
+function megaItem(id){
+  const p = byId[id]; if(!p) return "";
+  return `<a class="mega-item" data-id="${id}"><b>${p.tab}</b><small>${MENU_DESC[id]||""}</small></a>`;
+}
+function megaGroup(title, ids){
+  return `<div class="mega-group"><div class="mega-h">${title}</div>${ids.map(megaItem).join("")}</div>`;
+}
+const MEGA_COLS = [
+  [ ["AI 제작 기능", ["ai-page","url","image","figma","html","block-ai"]] ],
+  [ ["마켓플레이스", ["appstore","block-market","template"]], ["운영", ["ops-agent"]] ],
+  [ ["고급기능", ["bdk","mcp","custom-app","api","custom-db"]] ],
+];
+document.getElementById("megaGrid").innerHTML =
+  MEGA_COLS.map(col=>`<div class="mega-col">${col.map(g=>megaGroup(g[0],g[1])).join("")}</div>`).join("")
+  + `<div class="mega-promo">
+       <div class="mega-h">이렇게 시작해요</div>
+       <div class="pt">무엇으로든 페이지가 돼요</div>
+       <div class="pd">AI·URL·이미지·피그마·HTML로 페이지를 만들고, 블록·홈페이지·운영까지 한 곳에서 해결해요.</div>
+       <div class="pbtn"><button class="btn btn-accent" data-id="ai-page">AI로 페이지 만들기</button></div>
+     </div>`;
+
+const megaEl = document.getElementById("mega");
+const trigger = document.getElementById("feat-trigger");
+let megaT;
+function megaOpen(){ clearTimeout(megaT); megaEl.classList.add("open"); }
+function megaClose(){ megaT = setTimeout(()=>megaEl.classList.remove("open"), 140); }
+[trigger, megaEl].forEach(el=>{ el.addEventListener("mouseenter", megaOpen); el.addEventListener("mouseleave", megaClose); });
+trigger.addEventListener("click", e=>e.preventDefault());
+megaEl.addEventListener("click", e=>{
+  const it = e.target.closest("[data-id]");
+  if(!it) return;
+  e.preventDefault();
+  switchTo(it.dataset.id);
+  megaEl.classList.remove("open");
+});
+</script>
+</body>
+</html>
